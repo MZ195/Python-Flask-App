@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, url_for, redirect
 
 app = Flask(__name__)
 
@@ -21,21 +21,20 @@ def query():
     return '<h1>Hi {}. You are from {}. You are on the query page!</h1>'.format(name, location)
 
 
-@app.route('/theform')
+@app.route('/theform', methods=["GET", "POST"])
 def theForm():
-    return '''<form method="POST" action="/process">
-    <input type="text" name="name">
-    <input type="text" name="location">
-    <input type="submit">
-    </form>
-    '''
 
-
-@app.route('/process', methods=['POST'])
-def process():
-    name = request.form['name']
-    location = request.form['location']
-    return '<h1>Hi {}. You are from {}. You have submitted the form successfully!</h1>'.format(name, location)
+    if request.method == 'GET':
+        return '''<form method="POST" action="/theform">
+        <input type="text" name="name">
+        <input type="text" name="location">
+        <input type="submit">
+        </form>
+        '''
+    else:
+        name = request.form['name']
+        location = request.form['location']
+        return '<h1>Hi {}. You are from {}. You have submitted the form successfully!</h1>'.format(name, location)
 
 
 @app.route('/processJson', methods=['POST'])
