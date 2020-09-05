@@ -38,6 +38,17 @@ def process():
     return '<h1>Hi {}. You are from {}. You have submitted the form successfully!</h1>'.format(name, location)
 
 
+@app.route('/processJson', methods=['POST'])
+def processJson():
+    data = request.get_json()
+
+    name = data["name"]
+    location = data["location"]
+    randomList = data["list"]
+
+    return jsonify({'result': 'Success!'})
+
+
 @app.route('/json')
 def json():
     return jsonify({
