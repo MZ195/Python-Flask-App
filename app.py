@@ -1,60 +1,23 @@
-from flask import Flask, jsonify, request, url_for, redirect
+import os
+from flask import Flask
 
-app = Flask(__name__)
-
-
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    return '<h1>Hello {}!</h1>'.format("nono")
-
-
-@app.route('/home', methods=['POST', 'GET'], defaults={'name': 'Mr.X'})
-@app.route('/home/<int:name>', methods=['POST', 'GET'])
-def home(name):
-    return '<h1>Hello {}, You are on the home page!</h1>'.format(name)
+# blueprint import
+from blueprints.urls.views import urls
+from blueprints.domains.views import domains
+from blueprints.files.views import files
+from blueprints.ip_address.views import ip_address
 
 
-@app.route('/query')
-def query():
-    name = request.args.get('name')
-    location = request.args.get('location')
-    return '<h1>Hi {}. You are from {}. You are on the query page!</h1>'.format(name, location)
+def create_app(app):
+    # register blueprint
+    app.register_blueprint(urls)
+    app.register_blueprint(domains)
+    app.register_blueprint(files)
+    app.register_blueprint(ip_address)
 
-
-@app.route('/theform', methods=["GET", "POST"])
-def theForm():
-
-    if request.method == 'GET':
-        return '''<form method="POST" action="/theform">
-        <input type="text" name="name">
-        <input type="text" name="location">
-        <input type="submit">
-        </form>
-        '''
-    else:
-        name = request.form['name']
-        location = request.form['location']
-        return '<h1>Hi {}. You are from {}. You have submitted the form successfully!</h1>'.format(name, location)
-
-
-@app.route('/processJson', methods=['POST'])
-def processJson():
-    data = request.get_json()
-
-    name = data["name"]
-    location = data["location"]
-    randomList = data["list"]
-
-    return jsonify({'result': 'Success!'})
-
-
-@app.route('/json')
-def json():
-    return jsonify({
-        'key': 'value',
-        'key2': [1, 2, 3, 4, 5]
-    })
+    return app
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app = Flask(__name__)
+    create_app(app).run(debug=True, port=9090)
